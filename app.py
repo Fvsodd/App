@@ -284,10 +284,10 @@ class UniversityApp(tk.Tk):
             ("Профиль", self.show_profile),
         ]
 
-        if self._is_conspect_installed() or self.current_user["role"] in ("teacher", "admin"):
+        if self._is_conspect_installed():
             nav_items.append(("Конспектатор", self.show_conspectator))
         else:
-            nav_items.append(("Конспектатор (доступен после установки)", lambda: messagebox.showinfo("Информация", "Установите «Конспектатор» в разделе «Маркетплейс")))
+            nav_items.append(("Конспектатор (доступен после установки)", lambda: messagebox.showinfo("Информация", "Сначала установите «Конспектатор» в разделе «Маркетплейс»")))
 
         if self.current_user["role"] == "admin":
             nav_items.append(("Панель администратора", self.show_admin_panel))
@@ -323,6 +323,7 @@ class UniversityApp(tk.Tk):
         ttk.Entry(bar, textvariable=self.search_var, width=34).pack(side="left", padx=(6, 8))
         ttk.Button(bar, text="Найти", command=self._refresh_marketplace).pack(side="left")
         ttk.Button(bar, text="Установить выбранное", command=self._install_selected).pack(side="left", padx=6)
+        ttk.Button(bar, text="Удалить выбранное", command=self._remove_selected).pack(side="left", padx=6)
 
         self.market_tree = ttk.Treeview(self.content_frame, columns=("id", "name", "description", "category", "downloads"), show="headings", height=15)
         for col, txt, w in [
@@ -378,6 +379,36 @@ class UniversityApp(tk.Tk):
         if app_name == "Конспектатор":
             self._build_dashboard()
             self.show_conspectator()
+
+    def _remove_selected(self):
+        sel = self.market_tree.selection()
+        if not sel:
+            messagebox.showwarning("Удаление", "Сначала выберите приложение")
+            return
+
+        app_id = int(self.market_tree.item(sel[0], "values")[0])
+        app_name = self.market_tree.item(sel[0], "values")[1]
+
+        conn = db_conn()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM installs WHERE user_id=? AND app_id=?", (self.current_user["id"], app_id))
+        removed = cur.rowcount
+        if removed:
+            cur.execute("UPDATE apps SET downloads = CASE WHEN downloads > 0 THEN downloads - 1 ELSE 0 END WHERE id=?", (app_id,))
+        conn.commit()
+        conn.close()
+
+        self._refresh_marketplace()
+
+        if not removed:
+            messagebox.showinfo("Удаление", f"«{app_name}» не установлено у текущего пользователя.")
+            return
+
+        messagebox.showinfo("Удаление", f"«{app_name}» удалено (симуляция).")
+
+        if app_name == "Конспектатор":
+            self._build_dashboard()
+            self.show_marketplace()
 
     def show_ai_navigator(self):
         self._clear_content()
