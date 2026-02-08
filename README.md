@@ -1,42 +1,40 @@
-# Zhetisu University AI Marketplace (Desktop MVP)
+# Zhetisu University AI Marketplace — Beta UI Demo
 
-This repository contains a **desktop MVP** for an internal university AI marketplace.
+This repository now contains a **Material UI-based beta interface** designed for clear presentation to university administration and teachers.
 
-## What this MVP includes
+## What changed
 
-- Desktop app UI (Tkinter) for Windows/Linux/macOS
-- Mock authentication with role-based access (`student`, `teacher`, `admin`)
-- Marketplace with categories and semantic search
-- Mock install flow with download counters
-- Student app upload and admin moderation
-- AI Navigator recommendation panel
-- Student digital portfolio
-- Teacher dashboard for usage insights
-- Admin panel for approvals and system control
+- Replaced raw prototype UI with Material UI components and layout system.
+- Added clear left-side navigation for role-based flows.
+- Added a "What to do" guidance panel to make user actions obvious.
+- Kept core MVP functionality:
+  - role-based login (student/teacher/admin)
+  - marketplace browsing + semantic-style search
+  - student upload (guided modal)
+  - AI navigator recommendations
+  - student portfolio
+  - teacher dashboard
+  - admin moderation queue
+- Hidden/removed unfinished advanced controls for cleaner demo behavior.
 
-## Quick start
+## Run locally
 
 ```bash
-python3 app.py
+npm install
+npm run dev
 ```
 
-No external dependencies are required beyond Python 3.
+Then open the printed localhost URL.
 
 ## Demo accounts
 
-- Student: `student1 / pass123`
-- Student: `student2 / pass123`
-- Teacher: `teacher1 / pass123`
-- Admin: `admin1 / admin123`
-
-## Data storage
-
-The app uses a local SQLite database file:
-
-- `marketplace.db` (auto-created on first run)
+- `student1 / pass123`
+- `student2 / pass123`
+- `teacher1 / pass123`
+- `admin1 / admin123`
 
 ## Notes
 
-- This is an MVP for internal pilot use and demo purposes.
-- Install action is simulated (no executable deployment).
-- Authentication is mock and not integrated with university SSO.
+- This is a frontend-focused beta presentation build.
+- Data is seeded in-memory for demo simplicity.
+- No production auth or deployment logic is included.
